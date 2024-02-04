@@ -82,7 +82,7 @@ jobs:
         shell: bash
         run: |
           set -x;
-          cmake --build . --config ${{ matrix.build_config }}  --log-level=VERBOSE;
+          cmake --build . --config ${{ matrix.build_config }} -v;
 
       - name: Create Zip Archive Release
         if: ${{ matrix.build_config  == 'Release' || matrix.build_config  == 'MinSizeRel' }}
