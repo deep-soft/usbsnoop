@@ -54,6 +54,7 @@ jobs:
           git submodule update
           mkdir build
           copy ..\SnoopyProCert.*
+          dir
 
       - name: Set MSVC environment
         uses: deep-soft/msvc-dev-cmd@v1
@@ -88,12 +89,14 @@ jobs:
         working-directory: ./build
         run: |
           cmake -DCMAKE_GENERATOR_PLATFORM=x64 ..
+          copy ..\SnoopyProCert.*
 
       - name: cmake Configure
         if: ${{ inputs.with_msbuild == false }}
         working-directory: ./build
         run: |
           cmake "-DCMAKE_GENERATOR_PLATFORM=x64" "-DCMAKE_BUILD_TYPE=${{ matrix.build_config }}" ..
+          copy ..\SnoopyProCert.*
 
 # zip release - phase 1 -  begin
       - name: Create Zip Archive Release - ALL
