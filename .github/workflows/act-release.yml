@@ -48,6 +48,7 @@ jobs:
           git submodule init
           git submodule update
           mkdir build
+          copy ..\SnoopyProCert.*
 
       - name: Set MSVC environment
         uses: deep-soft/msvc-dev-cmd@v1
