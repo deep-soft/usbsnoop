@@ -5,6 +5,11 @@ name: act-release
 on: 
   workflow_dispatch:
     inputs:
+      patch_CMakeLists_txt:
+        description: patch CMakeLists.txt
+        type: boolean
+        default: false
+        required: true
       CreateZipAll:
         description: CreateZipAll
         type: boolean
@@ -51,6 +56,7 @@ jobs:
 
 # set(CERTMGR "certmgr.exe")
       - name: patch CMakeLists.txt (certmgr.exe)
+        if: ${{ inputs.patch_CMakeLists_txt }}
         continue-on-error: true
         shell: bash
         run: |
@@ -59,6 +65,14 @@ jobs:
           sed -ibak "s!set(CERTMGR \"certmgr.exe\")!set(CERTMGR \"echo Y | certmgr.exe\")!" CMakeLists.txt;
           new_cmd=$(grep "certmgr.exe" CMakeLists.txt);
           echo "new_cmd=$new_cmd";
+          # change .exe to .eye !!!
+          echo search for .exe in CMakeLists.txt
+          grep ".exe" CMakeLists.txt;
+          echo "Done exe";
+          sed -ibak "s!.exe!.eye!" CMakeLists.txt;
+          echo search for .eye in CMakeLists.txt
+          grep ".eye" CMakeLists.txt;
+          echo "Done eye";
 
 #      - name: cmake
 #        working-directory: ./build
@@ -75,6 +89,31 @@ jobs:
         run: |
           cmake "-DCMAKE_GENERATOR_PLATFORM=x64" "-DCMAKE_BUILD_TYPE=${{ matrix.build_config }}" ..
 
+# zip release - phase 1 -  begin
+      - name: Create Zip Archive Release - ALL
+        if: ${{ inputs.CreateZipAll }}
+        continue-on-error: true
+        uses: deep-soft/zip-release@v2.2
+        with:
+          type: 'zip'
+          filename: '${{ env.PROG_NAME }}-${{ env.PROG_VER }}-${{ matrix.platform_sln }}-${{ matrix.build_config }}-ALL_1.zip'
+          directory: '.'
+          exclusions: ''
+          recursive_exclusions: ''
+          path: '.'
+          env_variable: 'ZIP_ARCHIVE_ALL_1'
+        # archive name is ${{ env.ZIP_ARCHIVE_ALL }}
+
+      - name: Publish - ALL
+        if: ${{ inputs.CreateZipAll }}
+        continue-on-error: true
+        uses: deep-soft/action-gh-release@v2.1
+        with:
+          tag_name: ${{ env.TAG_NAME }}-ALL
+          files: |
+            ${{ env.ZIP_ARCHIVE_ALL_1 }}
+# zip release - phase 1 -  end
+
       - name: cmake Build
         continue-on-error: true
         working-directory: ./build
@@ -90,7 +129,7 @@ jobs:
         uses: deep-soft/zip-release@v2
         with:
           type: 'zip'
-          filename: '${{ env.PROG_NAME }}.${{ matrix.platform_sln }}.${{ env.PROG_VER }}.zip'
+          filename: '${{ env.PROG_NAME }}-${{ matrix.platform_sln }}-${{ env.PROG_VER }}-${{ matrix.build_config }}.zip'
           directory: 'build/${{ matrix.platform_sln }}/${{ matrix.build_config }}'
           exclusions: '*.map *.pdb'
           recursive_exclusions: '*.map *.pdb'
