@@ -4,6 +4,12 @@ name: act-release
 
 on: 
   workflow_dispatch:
+    inputs:
+      CreateZipAll:
+        description: CreateZipAll
+        type: boolean
+        default: false
+        required: true
 #  push:
 #  pull_request: 
 #  schedule: 
