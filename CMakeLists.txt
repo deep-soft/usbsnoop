@@ -63,7 +63,7 @@ target_include_directories(${USBSNOOP} PRIVATE
 
 add_custom_command(TARGET ${USBSNOOP}
 	POST_BUILD
-	COMMAND "${SIGNTOOL}" sign /v /f ${SNOOPYPRO_CERT}.pfx /t http://timestamp.verisign.com/scripts/timstamp.dll $<TARGET_FILE:${USBSNOOP}>
+	COMMAND "${SIGNTOOL}" sign /fd SHA256 /v /f ${SNOOPYPRO_CERT}.pfx /t http://timestamp.verisign.com/scripts/timstamp.dll $<TARGET_FILE:${USBSNOOP}>
         COMMENT "Signing $<TARGET_FILE:${USBSNOOP} ...")
 
 set(USBSNPYS USBSnpys)
@@ -83,7 +83,7 @@ target_include_directories(${USBSNPYS} PRIVATE
 
 add_custom_command(TARGET ${USBSNPYS}
 	POST_BUILD
-	COMMAND "${SIGNTOOL}" sign /v /f ${SNOOPYPRO_CERT}.pfx /t http://timestamp.verisign.com/scripts/timstamp.dll $<TARGET_FILE:${USBSNPYS}>
+	COMMAND "${SIGNTOOL}" sign /fd SHA256 /v /f ${SNOOPYPRO_CERT}.pfx /t http://timestamp.verisign.com/scripts/timstamp.dll $<TARGET_FILE:${USBSNPYS}>
 	COMMENT "Signing $<TARGET_FILE:${USBSNPYS} ...")
 
 set(SNOOPYPRO SnoopyPro)
@@ -110,14 +110,14 @@ target_compile_definitions(${SNOOPYPRO} PUBLIC SNOOPYPRO_MANIFEST="${SNOOPYPRO}.
 add_custom_command(TARGET ${SNOOPYPRO}
 	POST_BUILD 
 	COMMAND "mt.exe" -manifest \"${CMAKE_CURRENT_SOURCE_DIR}\\${SNOOPYPRO}\\${SNOOPYPRO}.exe.x86.manifest\" -outputresource:\"$<TARGET_FILE:${SNOOPYPRO}>\"\;\#1
-	COMMAND "${SIGNTOOL}" sign /v /f ${SNOOPYPRO_CERT}.pfx /t http://timestamp.verisign.com/scripts/timstamp.dll $<TARGET_FILE:${SNOOPYPRO}>
+	COMMAND "${SIGNTOOL}" sign /fd SHA256 /v /f ${SNOOPYPRO_CERT}.pfx /t http://timestamp.verisign.com/scripts/timstamp.dll $<TARGET_FILE:${SNOOPYPRO}>
 	COMMENT "Adding custom manifest file and signing the executable ...")
 elseif (${ARCH} STREQUAL "x86_64")
 target_compile_definitions(${SNOOPYPRO} PUBLIC SNOOPYPRO_MANIFEST="${SNOOPYPRO}.exe.x64.manifest")
 add_custom_command(TARGET ${SNOOPYPRO}
 	POST_BUILD
 	COMMAND "mt.exe" -manifest \"${CMAKE_CURRENT_SOURCE_DIR}\\${SNOOPYPRO}\\${SNOOPYPRO}.exe.x64.manifest\" -outputresource:\"$<TARGET_FILE:${SNOOPYPRO}>\"\;\#1
-	COMMAND "${SIGNTOOL}" sign /v /f ${SNOOPYPRO_CERT}.pfx /t http://timestamp.digicert.com $<TARGET_FILE:${SNOOPYPRO}>
+	COMMAND "${SIGNTOOL}" sign /fd SHA256 /v /f ${SNOOPYPRO_CERT}.pfx /t http://timestamp.digicert.com $<TARGET_FILE:${SNOOPYPRO}>
 	COMMENT "Adding custom manifest file and signing the executable ...")
 else()
 message(FATAL_ERROR "Unsupported target architecture \"${ARCH}\"")
