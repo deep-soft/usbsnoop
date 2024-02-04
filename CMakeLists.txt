@@ -30,6 +30,7 @@ set(PVK2PFX "${WINSDK}/pvk2pfx.exe")
 set(SIGNTOOL "${WINSDK}/signtool.exe")
 
 add_custom_command(OUTPUT ${SNOOPYPRO_CERT}.pfx
+	COMMAND "${CMAKE_COMMAND}" -E remove ${SNOOPYPRO_CERT}.pfx ${SNOOPYPRO_CERT}.spc
 	COMMAND "${CERTMGR}" -add ${SNOOPYPRO_CERT}.cer -s -r localMachine ROOT
 	COMMAND "${CERTMGR}" -add ${SNOOPYPRO_CERT}.cer -s -r localMachine TRUSTEDPUBLISHER
 	COMMAND "${CERT2SPC}" ${SNOOPYPRO_CERT}.cer ${SNOOPYPRO_CERT}.spc
