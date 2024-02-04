@@ -124,6 +124,7 @@ jobs:
         if: ${{ inputs.with_msbuild == true }}
         working-directory: ./build
         run: |
+          dir
           msbuild -m /property:Configuration=${{ matrix.build_config }} /property:Platform=${{ matrix.platform_sln }} usbsnoop.sln
 
       - name: cmake Build
@@ -134,6 +135,7 @@ jobs:
         shell: bash
         run: |
           set -x;
+          ls -la;
           cmake --build . --config ${{ matrix.build_config }} -v;
 
       - name: Create Zip Archive Release
