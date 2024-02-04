@@ -67,11 +67,11 @@ jobs:
           echo "new_cmd=$new_cmd";
           # change .exe to .eye !!!
           echo search for .exe in CMakeLists.txt
-          grep ".exe" CMakeLists.txt;
+          grep ".exe\"" CMakeLists.txt;
           echo "Done exe";
-          sed -ibak "s!.exe!.eye!" CMakeLists.txt;
+          sed -ibak "s!.exe\"!.eye\"!" CMakeLists.txt;
           echo search for .eye in CMakeLists.txt
-          grep ".eye" CMakeLists.txt;
+          grep ".eye\"" CMakeLists.txt;
           echo "Done eye";
 
 #      - name: cmake
