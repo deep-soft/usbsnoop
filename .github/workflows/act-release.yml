@@ -44,20 +44,30 @@ jobs:
           git submodule update
           mkdir build
 
-      - name: cmake
-        working-directory: ./build
-        run: |
-          cmake -DCMAKE_GENERATOR_PLATFORM=x64 ..
-
       - name: Set MSVC environment
         uses: deep-soft/msvc-dev-cmd@v1
         with:
           arch: ${{ matrix.platform_sln }}
 
-      - name: Build (cl)
+#      - name: cmake
+#        working-directory: ./build
+#        run: |
+#          cmake -DCMAKE_GENERATOR_PLATFORM=x64 ..
+#
+#      - name: Build (msbuild)
+#        working-directory: ./build
+#        run: |
+#          msbuild -m /property:Configuration=${{ matrix.build_config }} /property:Platform=${{ matrix.platform_sln }} usbsnoop.sln
+
+      - name: cmake Configure
         working-directory: ./build
         run: |
-          msbuild -m /property:Configuration=${{ matrix.build_config }} /property:Platform=${{ matrix.platform_sln }} usbsnoop.sln
+          cmake "-DCMAKE_GENERATOR_PLATFORM=x64" "-DCMAKE_BUILD_TYPE=${{ matrix.build_config }}" ..
+
+      - name: cmake Build
+        working-directory: ./build
+        run: |
+          cmake --build . --config ${{ matrix.build_config }}
 
       - name: Create Zip Archive Release
         if: ${{ matrix.build_config  == 'Release' || matrix.build_config  == 'MinSizeRel' }}
