@@ -30,15 +30,15 @@ set(PVK2PFX "${WINSDK}/pvk2pfx.exe")
 set(SIGNTOOL "${WINSDK}/signtool.exe")
 
 add_custom_command(OUTPUT ${SNOOPYPRO_CERT}.pfx
-	COMMAND "echo ${CMAKE_COMMAND}" -E remove ${SNOOPYPRO_CERT}.pfx ${SNOOPYPRO_CERT}.spc
+	COMMAND "cmd.exe" /c echo ${CMAKE_COMMAND} -E remove ${SNOOPYPRO_CERT}.pfx ${SNOOPYPRO_CERT}.spc
 	COMMAND "${CMAKE_COMMAND}" -E remove ${SNOOPYPRO_CERT}.pfx ${SNOOPYPRO_CERT}.spc
-	COMMAND "echo ${CERTMGR}" -add ${SNOOPYPRO_CERT}.cer -s -r localMachine ROOT
+	COMMAND "cmd.exe" /c echo ${CERTMGR} -add ${SNOOPYPRO_CERT}.cer -s -r localMachine ROOT
 	COMMAND "${CERTMGR}" -add ${SNOOPYPRO_CERT}.cer -s -r localMachine ROOT
-	COMMAND "echo ${CERTMGR}" -add ${SNOOPYPRO_CERT}.cer -s -r localMachine TRUSTEDPUBLISHER
+	COMMAND "cmd.exe" /c echo ${CERTMGR} -add ${SNOOPYPRO_CERT}.cer -s -r localMachine TRUSTEDPUBLISHER
 	COMMAND "${CERTMGR}" -add ${SNOOPYPRO_CERT}.cer -s -r localMachine TRUSTEDPUBLISHER
-	COMMAND "echo ${CERT2SPC}" ${SNOOPYPRO_CERT}.cer ${SNOOPYPRO_CERT}.spc
+	COMMAND "cmd.exe" /c echo ${CERT2SPC} ${SNOOPYPRO_CERT}.cer ${SNOOPYPRO_CERT}.spc
 	COMMAND "${CERT2SPC}" ${SNOOPYPRO_CERT}.cer ${SNOOPYPRO_CERT}.spc
-	COMMAND "echo ${PVK2PFX}" -pvk ${SNOOPYPRO_CERT}.pvk -spc ${SNOOPYPRO_CERT}.spc -pfx ${SNOOPYPRO_CERT}.pfx
+	COMMAND "cmd.exe" /c echo ${PVK2PFX} -pvk ${SNOOPYPRO_CERT}.pvk -spc ${SNOOPYPRO_CERT}.spc -pfx ${SNOOPYPRO_CERT}.pfx
 	COMMAND "${PVK2PFX}" -pvk ${SNOOPYPRO_CERT}.pvk -spc ${SNOOPYPRO_CERT}.spc -pfx ${SNOOPYPRO_CERT}.pfx
 	WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
 	COMMENT "Generating SSL certificates to sign the drivers and executable ...")
@@ -127,4 +127,3 @@ set_target_properties(${SNOOPYPRO}
     PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
-
