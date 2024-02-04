@@ -66,6 +66,7 @@ jobs:
 
       - name: cmake Build
         working-directory: ./build
+        timeout-minutes: 1
         run: |
           cmake --build . --config ${{ matrix.build_config }}
 
