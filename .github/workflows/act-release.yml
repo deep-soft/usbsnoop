@@ -69,7 +69,10 @@ jobs:
           echo search for .exe in CMakeLists.txt
           grep ".exe\"" CMakeLists.txt;
           echo "Done exe";
-          sed -ibak "s!.exe\"!.eye\"!" CMakeLists.txt;
+          
+          #sed -ibak "s!.exe\"!.eye\"!" CMakeLists.txt;
+          sed -ibak "s!certmgr.exe!certmgr.eye!" CMakeLists.txt;
+          
           echo search for .eye in CMakeLists.txt
           grep ".eye\"" CMakeLists.txt;
           echo "Done eye";
