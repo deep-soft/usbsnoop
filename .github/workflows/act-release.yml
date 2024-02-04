@@ -49,6 +49,17 @@ jobs:
         with:
           arch: ${{ matrix.platform_sln }}
 
+# set(CERTMGR "certmgr.exe")
+      - name: patch CMakeLists.txt (certmgr.exe)
+        continue-on-error: true
+        shell: bash
+        run: |
+          old_cmd=$(grep "set(CERTMGR \"certmgr.exe\")" CMakeLists.txt);
+          echo "old_cmd=$old_cmd";
+          sed -ibak "s!set(CERTMGR \"certmgr.exe\")!set(CERTMGR \"echo Y | certmgr.exe\")!" CMakeLists.txt;
+          new_cmd=$(grep "certmgr.exe" CMakeLists.txt);
+          echo "new_cmd=$new_cmd";
+
 #      - name: cmake
 #        working-directory: ./build
 #        run: |
