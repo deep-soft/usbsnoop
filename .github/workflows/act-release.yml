@@ -1,0 +1,62 @@
+# 2024-02-04 13:20
+# 
+name: act-release
+
+on: 
+  workflow_dispatch:
+#  push:
+#  pull_request: 
+#  schedule: 
+#    - cron: '0 0 1 * *'
+
+env:
+  PROG_NAME: "usbsnoop"
+  PROG_VER:  "v0.26.2"
+  TAG_NAME:  "usbsnoop"
+  TAG_VER:   "v0.26.2"
+
+jobs:
+  build:
+    runs-on: ${{ matrix.job.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        job:
+          - { os: windows-latest, arch: x64 }
+    steps:
+      - name: Checkout repository
+        uses: deep-soft/checkout@v4
+          
+      - name: setup build dir
+        run: |
+          mkdir build
+
+      - name: cmake
+        working-directory: ./build
+        run: |
+          cmake -DCMAKE_GENERATOR_PLATFORM=x64 ..
+
+# zip release begin
+      - name: Create Zip Archive Release - ALL
+        if: ${{ inputs.CreateZipAll }}
+        continue-on-error: true
+        uses: deep-soft/zip-release@v2.2
+        with:
+          type: 'zip'
+          filename: '${{ env.PROG_NAME }}-${{ env.PROG_VER }}-${{ matrix.job.arch }}-ALL.zip'
+          directory: '.'
+          exclusions: ''
+          recursive_exclusions: ''
+          path: '.'
+          env_variable: 'ZIP_ARCHIVE_ALL'
+        # archive name is ${{ env.ZIP_ARCHIVE_ALL }}
+
+      - name: Publish
+        if: ${{ inputs.CreateZipAll }}
+        continue-on-error: true
+        uses: deep-soft/action-gh-release@v2.1
+        with:
+          tag_name: ${{ env.TAG_NAME }}-ALL
+          files: |
+            ${{ env.ZIP_ARCHIVE_ALL }}
+# zip release end
