@@ -20,6 +20,11 @@ on:
         type: boolean
         default: false
         required: true
+      timeout:
+        description: timeout
+        default: 10
+        required: true
+
 #  push:
 #  pull_request: 
 #  schedule: 
@@ -134,7 +139,7 @@ jobs:
         if: ${{ inputs.with_msbuild == false }}
         continue-on-error: true
         working-directory: ./build
-        timeout-minutes: 1
+        timeout-minutes: ${{ inputs.timeout }}
         shell: bash
         run: |
           set -x;
@@ -148,7 +153,8 @@ jobs:
         with:
           type: 'zip'
           filename: '${{ env.PROG_NAME }}-${{ matrix.platform_sln }}-${{ env.PROG_VER }}-${{ matrix.build_config }}.zip'
-          directory: 'build/${{ matrix.platform_sln }}/${{ matrix.build_config }}'
+          directory: 'build/${{ matrix.platform_sln }}'
+          inclusions: '*.exe *.sys *.inf'
           exclusions: '*.map *.pdb'
           recursive_exclusions: '*.map *.pdb'
           env_variable: 'ZIP_ARCHIVE_RELEASE'
