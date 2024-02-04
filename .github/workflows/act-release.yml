@@ -49,6 +49,8 @@ jobs:
         include:
           - { build: msbuild_cl_x64_release,  os: windows-2019,  compiler: msbuild_cl, arch: amd64,  platform_sln: x64,  platform_name: x64,  build_config: Release    }
           - { build: msbuild_cl_x64_minsize,  os: windows-2019,  compiler: msbuild_cl, arch: amd64,  platform_sln: x64,  platform_name: x64,  build_config: MinSizeRel }
+        timeout-minutes:
+        - ${{ inputs.timeout }}
     steps:
       - name: Checkout repository
         uses: deep-soft/checkout@v4
@@ -139,7 +141,7 @@ jobs:
         if: ${{ inputs.with_msbuild == false }}
         continue-on-error: true
         working-directory: ./build
-        timeout-minutes: ${{ inputs.timeout }}
+        timeout-minutes: ${{ matrix.timeout }}
         shell: bash
         run: |
           set -x;
