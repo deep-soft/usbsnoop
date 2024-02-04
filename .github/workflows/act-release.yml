@@ -156,7 +156,7 @@ jobs:
           type: 'zip'
           filename: '${{ env.PROG_NAME }}-${{ matrix.platform_sln }}-${{ env.PROG_VER }}-${{ matrix.build_config }}.zip'
           directory: 'build/${{ matrix.build_config }}'
-          inclusions: '*.exe *.sys *.inf'
+          inclusions: ''
           exclusions: '*.map *.pdb'
           recursive_exclusions: '*.map *.pdb'
           env_variable: 'ZIP_ARCHIVE_RELEASE'
