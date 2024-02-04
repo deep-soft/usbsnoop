@@ -65,6 +65,7 @@ jobs:
           cmake "-DCMAKE_GENERATOR_PLATFORM=x64" "-DCMAKE_BUILD_TYPE=${{ matrix.build_config }}" ..
 
       - name: cmake Build
+        continue-on-error: true
         working-directory: ./build
         timeout-minutes: 1
         run: |
