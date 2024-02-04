@@ -104,7 +104,7 @@ jobs:
           copy ..\SnoopyProCert.*
 
 # zip release - phase 1 -  begin
-      - name: Create Zip Archive Release - ALL
+      - name: Create Zip Archive Release - ALL 1
         if: ${{ inputs.CreateZipAll }}
         continue-on-error: true
         uses: deep-soft/zip-release@v2.2
@@ -153,7 +153,7 @@ jobs:
         with:
           type: 'zip'
           filename: '${{ env.PROG_NAME }}-${{ matrix.platform_sln }}-${{ env.PROG_VER }}-${{ matrix.build_config }}.zip'
-          directory: 'build/${{ matrix.platform_sln }}'
+          directory: 'build/${{ matrix.build_config }}'
           inclusions: '*.exe *.sys *.inf'
           exclusions: '*.map *.pdb'
           recursive_exclusions: '*.map *.pdb'
