@@ -5,6 +5,11 @@ name: act-release
 on: 
   workflow_dispatch:
     inputs:
+      with_msbuild:
+        description: with msbuild
+        type: boolean
+        default: true
+        required: true
       patch_CMakeLists_txt:
         description: patch CMakeLists.txt
         type: boolean
@@ -78,17 +83,14 @@ jobs:
           grep ".eye\"" CMakeLists.txt;
           echo "Done eye";
 
-#      - name: cmake
-#        working-directory: ./build
-#        run: |
-#          cmake -DCMAKE_GENERATOR_PLATFORM=x64 ..
-#
-#      - name: Build (msbuild)
-#        working-directory: ./build
-#        run: |
-#          msbuild -m /property:Configuration=${{ matrix.build_config }} /property:Platform=${{ matrix.platform_sln }} usbsnoop.sln
+      - name: cmake
+        if: ${{ inputs.with_msbuild == true }}
+        working-directory: ./build
+        run: |
+          cmake -DCMAKE_GENERATOR_PLATFORM=x64 ..
 
       - name: cmake Configure
+        if: ${{ inputs.with_msbuild == false }}
         working-directory: ./build
         run: |
           cmake "-DCMAKE_GENERATOR_PLATFORM=x64" "-DCMAKE_BUILD_TYPE=${{ matrix.build_config }}" ..
@@ -118,7 +120,14 @@ jobs:
             ${{ env.ZIP_ARCHIVE_ALL_1 }}
 # zip release - phase 1 -  end
 
+      - name: Build (msbuild)
+        if: ${{ inputs.with_msbuild == true }}
+        working-directory: ./build
+        run: |
+          msbuild -m /property:Configuration=${{ matrix.build_config }} /property:Platform=${{ matrix.platform_sln }} usbsnoop.sln
+
       - name: cmake Build
+        if: ${{ inputs.with_msbuild == false }}
         continue-on-error: true
         working-directory: ./build
         timeout-minutes: 1
