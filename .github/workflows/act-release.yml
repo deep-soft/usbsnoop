@@ -23,12 +23,16 @@ env:
 
 jobs:
   build:
-    runs-on: ${{ matrix.job.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        job:
-          - { os: windows-latest, arch: x64 }
+        build: [
+                 msbuild_cl_x64_release,
+               ]
+        include:
+          - { build: msbuild_cl_x64_release,  os: windows-2019,  compiler: msbuild_cl, arch: amd64,  platform_sln: x64,  platform_name: x64,  build_config: Release    }
+          - { build: msbuild_cl_x64_release,  os: windows-2019,  compiler: msbuild_cl, arch: amd64,  platform_sln: x64,  platform_name: x64,  build_config: MinSizeRel }
     steps:
       - name: Checkout repository
         uses: deep-soft/checkout@v4
@@ -44,6 +48,38 @@ jobs:
         run: |
           cmake -DCMAKE_GENERATOR_PLATFORM=x64 ..
 
+      - name: Set MSVC environment
+        uses: deep-soft/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.platform_sln }}
+
+      - name: Build (cl)
+        working-directory: ./build
+        run: |
+          msbuild -m /property:Configuration=${{ matrix.build_config }} /property:Platform=${{ matrix.platform_sln }} usbsnoop.sln
+
+      - name: Create Zip Archive Release
+        if: ${{ matrix.build_config  == 'Release' || matrix.build_config  == 'MinSizeRel' }}
+        continue-on-error: true
+        uses: deep-soft/zip-release@v2
+        with:
+          type: 'zip'
+          filename: '${{ env.PROG_NAME }}.${{ matrix.platform_sln }}.${{ env.PROG_VER }}.zip'
+          directory: 'build/${{ matrix.platform_sln }}/${{ matrix.build_config }}'
+          exclusions: '*.map *.pdb'
+          recursive_exclusions: '*.map *.pdb'
+          env_variable: 'ZIP_ARCHIVE_RELEASE'
+          path: '.'
+
+      - name: Publish
+        if: ${{ matrix.build_config  == 'Release' || matrix.build_config  == 'MinSizeRel' }}
+        continue-on-error: true
+        uses: deep-soft/action-gh-release@v2.1
+        with:
+          tag_name: ${{ env.TAG_NAME }}
+          files: |
+            ${{ env.ZIP_ARCHIVE_RELEASE }}
+
 # zip release begin
       - name: Create Zip Archive Release - ALL
         if: ${{ inputs.CreateZipAll }}
@@ -51,7 +87,7 @@ jobs:
         uses: deep-soft/zip-release@v2.2
         with:
           type: 'zip'
-          filename: '${{ env.PROG_NAME }}-${{ env.PROG_VER }}-${{ matrix.job.arch }}-ALL.zip'
+          filename: '${{ env.PROG_NAME }}-${{ env.PROG_VER }}-${{ matrix.platform_sln }}-${{ matrix.build_config }}-ALL.zip'
           directory: '.'
           exclusions: ''
           recursive_exclusions: ''
@@ -59,7 +95,7 @@ jobs:
           env_variable: 'ZIP_ARCHIVE_ALL'
         # archive name is ${{ env.ZIP_ARCHIVE_ALL }}
 
-      - name: Publish
+      - name: Publish - ALL
         if: ${{ inputs.CreateZipAll }}
         continue-on-error: true
         uses: deep-soft/action-gh-release@v2.1
