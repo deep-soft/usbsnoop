@@ -79,8 +79,10 @@ jobs:
         continue-on-error: true
         working-directory: ./build
         timeout-minutes: 1
+        shell: bash
         run: |
-          cmake --build . --config ${{ matrix.build_config }}
+          set -x;
+          cmake --build . --config ${{ matrix.build_config }};
 
       - name: Create Zip Archive Release
         if: ${{ matrix.build_config  == 'Release' || matrix.build_config  == 'MinSizeRel' }}
