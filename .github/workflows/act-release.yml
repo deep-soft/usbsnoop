@@ -141,7 +141,7 @@ jobs:
         if: ${{ inputs.with_msbuild == false }}
         continue-on-error: true
         working-directory: ./build
-        timeout-minutes: matrix.timeout
+        timeout-minutes: ${{ matrix.timeout }}
         shell: bash
         run: |
           set -x;
